@@ -1,2 +1,3 @@
 pandas
 markdown
+pyyaml>=6.0

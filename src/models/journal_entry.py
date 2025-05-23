@@ -1,15 +1,13 @@
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+@dataclass
 class JournalEntry:
-    def __init__(self, title: str, content: str, date: str):
-        self.title = title
-        self.content = content
-        self.date = date
-
-    def __str__(self):
-        return f"{self.date} - {self.title}\n{self.content}"
-
-    def to_dict(self):
-        return {
-            "title": self.title,
-            "content": self.content,
-            "date": self.date
-        }
+    timestamp: datetime
+    morning_reflection: Optional[str] = None
+    evening_reflection: Optional[str] = None
+    gratitude: Optional[str] = None
+    quote: Optional[str] = None
+    mood: Optional[str] = None
+    tags: list[str] = None

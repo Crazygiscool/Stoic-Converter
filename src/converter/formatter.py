@@ -1,30 +1,39 @@
-class Formatter:
-    def __init__(self):
-        pass
+from ..models.journal_entry import JournalEntry
+from ..models.note import Note
 
-    def format_entry(self, journal_entry):
-        """
-        Formats a single journal entry into the Obsidian note format.
+class MarkdownFormatter:
+    @staticmethod
+    def format_entry(entry: JournalEntry) -> Note:
+        """Convert a journal entry to a markdown note"""
+        date_str = entry.timestamp.strftime('%Y-%m-%d')
+        title = f"Stoic Journal Entry - {date_str}"
         
-        Args:
-            journal_entry (JournalEntry): The journal entry to format.
-        
-        Returns:
-            str: The formatted note as a string.
-        """
-        formatted_note = f"# {journal_entry.title}\n\n"
-        formatted_note += f"Date: {journal_entry.date}\n\n"
-        formatted_note += f"{journal_entry.content}\n"
-        return formatted_note
+        content = f"""---
+date: {date_str}
+tags: {', '.join(['stoic-journal'] + (entry.tags or []))}
+mood: {entry.mood or 'Not recorded'}
+---
 
-    def format_entries(self, journal_entries):
-        """
-        Formats multiple journal entries into a list of Obsidian notes.
-        
-        Args:
-            journal_entries (list): A list of JournalEntry objects.
-        
-        Returns:
-            list: A list of formatted notes as strings.
-        """
-        return [self.format_entry(entry) for entry in journal_entries]
+# {title}
+
+## Morning Reflection
+{entry.morning_reflection or 'No morning reflection recorded'}
+
+## Evening Reflection
+{entry.evening_reflection or 'No evening reflection recorded'}
+
+## Gratitude
+{entry.gratitude or 'No gratitude recorded'}
+
+## Daily Quote
+> {entry.quote or 'No quote recorded'}
+
+"""
+        return Note(
+            title=title,
+            content=content,
+            date=entry.timestamp,
+            tags=['stoic-journal'] + (entry.tags or []),
+            folder='Daily',
+            filename=f"{date_str}_stoic_journal.md"
+        )

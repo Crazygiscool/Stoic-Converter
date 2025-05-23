@@ -1,24 +1,49 @@
-class Parser:
-    def __init__(self, source_file):
-        self.source_file = source_file
-        self.entries = []
+import yaml
+import zipfile
+from datetime import datetime
+from typing import List
+import os
+from ..models.journal_entry import JournalEntry
 
-    def read_entries(self):
-        with open(self.source_file, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                self.entries.append(self.parse_entry(line))
+class JournalParser:
+    def __init__(self, zip_file: str):
+        self.zip_file = zip_file
 
-    def parse_entry(self, line):
-        # Assuming each line is a journal entry in a specific format
-        parts = line.strip().split('|')
-        if len(parts) >= 3:
-            return {
-                'title': parts[0].strip(),
-                'content': parts[1].strip(),
-                'date': parts[2].strip()
-            }
-        return None
-
-    def get_entries(self):
-        return self.entries
+    def parse(self) -> List[JournalEntry]:
+        """Parse Stoic journal YAML files from zip archive into JournalEntry objects"""
+        entries = []
+        
+        with zipfile.ZipFile(self.zip_file, 'r') as archive:
+            # Filter only YAML files
+            yaml_files = [f for f in archive.namelist() if f.endswith(('.yaml', '.yml'))]
+            
+            for yaml_file in yaml_files:
+                with archive.open(yaml_file) as f:
+                    try:
+                        data = yaml.safe_load(f)
+                        if data:  # Skip empty files
+                            # Extract date from filename or file content
+                            date_str = os.path.splitext(os.path.basename(yaml_file))[0]
+                            try:
+                                timestamp = datetime.strptime(date_str, '%Y-%m-%d')
+                            except ValueError:
+                                # If filename is not a date, try to get date from content
+                                timestamp = datetime.now()  # fallback if no date found
+                            
+                            journal_entry = JournalEntry(
+                                timestamp=timestamp,
+                                morning_reflection=data.get('morning_reflection'),
+                                evening_reflection=data.get('evening_reflection'),
+                                gratitude=data.get('gratitude'),
+                                quote=data.get('quote'),
+                                mood=data.get('mood'),
+                                tags=data.get('tags', [])
+                            )
+                            entries.append(journal_entry)
+                    except yaml.YAMLError as e:
+                        print(f"Error parsing {yaml_file}: {str(e)}")
+                        continue
+        
+        # Sort entries by date
+        entries.sort(key=lambda x: x.timestamp)
+        return entries
