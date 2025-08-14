@@ -1,37 +1,18 @@
-import argparse
-from converter.parser import JournalParser
-from converter.formatter import MarkdownFormatter
-from utils.file_handler import FileHandler
-from utils.folder_manager import FolderManager
+from converter.json_parser import load_json_files, process_journal_entries
 
 def main():
-    parser = argparse.ArgumentParser(description='Convert Stoic journal entries to Obsidian notes')
-    parser.add_argument('input_file', help='Input JSON file containing Stoic journal entries')
-    parser.add_argument('output_dir', help='Output directory for Obsidian notes')
-    parser.add_argument('--clean', action='store_true', help='Clean output directory before conversion')
+    # Specify the directory containing the JSON files
+    json_directory = '../../sample_data/2025-08-14-stoic-backup/'
     
-    args = parser.parse_args()
-
-    # Initialize components
-    folder_manager = FolderManager(args.output_dir)
-    file_handler = FileHandler(args.output_dir)
-    journal_parser = JournalParser(args.input_file)
+    # Load JSON files
+    json_data = load_json_files(json_directory)
     
-    # Create folder structure
-    if args.clean:
-        folder_manager.clean_folders()
-    else:
-        folder_manager.create_folder_structure()
+    # Process journal entries
+    journal_entries = process_journal_entries(json_data)
     
-    # Parse and convert entries
-    entries = journal_parser.parse()
-    
-    # Process each entry
-    for entry in entries:
-        note = MarkdownFormatter.format_entry(entry)
-        file_handler.save_note(note)
-        
-    print(f"Successfully converted {len(entries)} entries to Obsidian notes")
+    # Further processing or conversion logic here
+    for entry in journal_entries:
+        print(entry)
 
 if __name__ == "__main__":
     main()

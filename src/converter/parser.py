@@ -10,7 +10,7 @@ class JournalParser:
         self.zip_file = zip_file
 
     def parse(self) -> List[JournalEntry]:
-        """Parse Stoic journal YAML files from zip archive into JournalEntry objects"""
+        """Parse Stoic journal YAML files from zip archive into JournalEntry objects."""
         entries = []
         
         with zipfile.ZipFile(self.zip_file, 'r') as archive:
@@ -22,13 +22,12 @@ class JournalParser:
                     try:
                         data = yaml.safe_load(f)
                         if data:  # Skip empty files
-                            # Extract date from filename or file content
+                            # Extract date from filename or use current date as fallback
                             date_str = os.path.splitext(os.path.basename(yaml_file))[0]
                             try:
                                 timestamp = datetime.strptime(date_str, '%Y-%m-%d')
                             except ValueError:
-                                # If filename is not a date, try to get date from content
-                                timestamp = datetime.now()  # fallback if no date found
+                                timestamp = datetime.now()  # Fallback if no valid date found
                             
                             journal_entry = JournalEntry(
                                 timestamp=timestamp,
