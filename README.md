@@ -2,11 +2,11 @@
 
 # Stoic Journal Converter
 
-The Stoic Journal Converter is a Python application designed to convert Stoic phone app journals into Obsidian notes. This project aims to provide users with a seamless way to manage their journal entries and enhance their journaling experience.
+The Stoic Journal Converter is a Python application designed to convert Stoic phone app journals into the Apple Official Journal app notes. This project aims to provide users with a seamless way to manage their journal entries and enhance their journaling experience.
 
 ## Features
 
-- **Conversion**: Convert Stoic journal entries into the Obsidian note format.
+- **Conversion**: Convert Stoic journal entries into the Apple Official Journal app format.
 - **Folder Management**: Automatically create and organize folders for storing converted journal entries.
 - **Customizable**: Easily extendable to add more features and functionalities.
 
