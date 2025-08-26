@@ -1,4 +1,6 @@
-# README.md for Stoic Journal Converter
+# In public archive, cause;;;;
+
+THIS AIN"T GON WORK, because apple journal doesn't import files, god dammit
 
 # Stoic Journal Converter
 
